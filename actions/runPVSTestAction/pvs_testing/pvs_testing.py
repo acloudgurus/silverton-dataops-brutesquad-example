@@ -43,47 +43,54 @@ def _pass_or_fail(result_dict):
 
 # Main function to perform PVS Test against specified stored procedures
 def main():
-    # Read environment and folder paths from GitHub Actions inputs
-    tdv_env = os.getenv("TDV_ENV").lower()
-    folder_list_raw = os.getenv("FOLDER_LIST", "[]")
-    print(f"DEBUG: Raw Folder List: {folder_list_raw}")  # Debugging step
+   def main():
+    # Read environment variables
+    tdv_env = os.getenv("TDV_ENV", "").strip().lower()
+    folder_list_raw = os.getenv("FOLDER_LIST", "[]").strip()
+
+    print(f"🔍 DEBUG: TDV_ENV = {tdv_env}")
+    print(f"🔍 DEBUG: Raw Folder List = {folder_list_raw}")
+
+    # Correctly parse FOLDER_LIST as a JSON array
     try:
-        folder_list = json.loads(folder_list_raw)  # ✅ Properly parse JSON list
+        folder_list = json.loads(folder_list_raw)  # Convert string to list
     except json.JSONDecodeError:
-        print("❌ ERROR: FOLDER_LIST is not a valid JSON list.")
+        print(" ERROR: FOLDER_LIST is not a valid JSON list.")
         sys.exit(1)
 
-# ✅ Ensure we only get valid folder paths
-folder_list = [folder.strip() for folder in folder_list if folder.strip()]
-    
-    if not folder_paths:
-        print("Error: No folder paths received.")
+    # Ensure we only get valid folder paths
+    folder_list = [folder.strip() for folder in folder_list if folder.strip()]
+
+    # Validation checks
+    if not folder_list:
+        print(" ERROR: No folder paths received.")
         sys.exit(1)
-    
+
     if not tdv_env:
-        print("Error: No environment (TDV_ENV) received.")
+        print(" ERROR: No environment (TDV_ENV) received.")
         sys.exit(1)
-    
-    # Construct the expected file name format
+
+    # Construct expected changelog filename
     changelog_filename = f"{tdv_env}.changelog.xml"
-    print(changelog_filename)
-    
+
     # Process each folder
-    for folder in folder_paths:
-        folder = folder.strip()
-        print(f"Folder : {folder}")
+    for folder in folder_list:
+        print(f"Checking Folder: {folder}")
+
         if os.path.isdir(folder):
-            # Search for {TDV_ENV}.changelog.xml inside the folder
             changelog_file = os.path.join(folder, changelog_filename)
-            print(f"Changelog file path is {changelog}")
-    
+            print(f"Checking for file: {changelog_file}")
+
             if os.path.exists(changelog_file):
-                print(f"Processing Changelog for Environment '{tdv_env}': {changelog_file}")
+                print(f"Processing Changelog: {changelog_file}")
+                # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)
             else:
-                print(f"❌ WARNING: No file found at '{changelog_file}'")
+                print(f"WARNING: No file found at '{changelog_file}'")
         else:
-            print(f"❌ WARNING: Folder does not exist - '{folder}'")
-            # Add processing logic here
+            print(f"WARNING: Folder does not exist - '{folder}'")
+
+if __name__ == "__main__":
+    main()
             
 
     # logger.info(f"Hello from the script")

@@ -43,44 +43,43 @@ def _pass_or_fail(result_dict):
 
 # Main function to perform PVS Test against specified stored procedures
 def main():
-   def main():
     # Read environment variables
     tdv_env = os.getenv("TDV_ENV", "").strip().lower()
     folder_list_raw = os.getenv("FOLDER_LIST", "[]").strip()
-
+    
     print(f"🔍 DEBUG: TDV_ENV = {tdv_env}")
     print(f"🔍 DEBUG: Raw Folder List = {folder_list_raw}")
-
+    
     # Correctly parse FOLDER_LIST as a JSON array
     try:
         folder_list = json.loads(folder_list_raw)  # Convert string to list
     except json.JSONDecodeError:
         print(" ERROR: FOLDER_LIST is not a valid JSON list.")
         sys.exit(1)
-
+    
     # Ensure we only get valid folder paths
     folder_list = [folder.strip() for folder in folder_list if folder.strip()]
-
+    
     # Validation checks
     if not folder_list:
         print(" ERROR: No folder paths received.")
         sys.exit(1)
-
+    
     if not tdv_env:
         print(" ERROR: No environment (TDV_ENV) received.")
         sys.exit(1)
-
+    
     # Construct expected changelog filename
     changelog_filename = f"{tdv_env}.changelog.xml"
-
+    
     # Process each folder
     for folder in folder_list:
         print(f"Checking Folder: {folder}")
-
+    
         if os.path.isdir(folder):
             changelog_file = os.path.join(folder, changelog_filename)
             print(f"Checking for file: {changelog_file}")
-
+    
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog: {changelog_file}")
                 # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)

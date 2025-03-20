@@ -44,7 +44,7 @@ def _pass_or_fail(result_dict):
 # Main function to perform PVS Test against specified stored procedures
 def main():
     # Read environment and folder paths from GitHub Actions inputs
-    tdv_env = os.getenv("TDV_ENV")
+    tdv_env = os.getenv("TDV_ENV").lower()
     folder_paths = os.getenv("FOLDER_LIST", "").split()
     
     if not folder_paths:

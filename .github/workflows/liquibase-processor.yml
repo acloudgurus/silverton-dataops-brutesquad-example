@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: liquibase-folder-list
-          path: folders.json
+          path: .
       - name: Init Env variables
         id: init-env
         run: |

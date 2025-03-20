@@ -21,14 +21,17 @@ on:
       FOLDER_LIST:
         required: true
         type: string
+    outputs:
+      folder-list: ${{ steps.init-var.outputs.folders_array}}
+      artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
 
 jobs:
   InitAndSetup:
     name: Initialize and setup the liquibase on runner
     runs-on: ubuntu-latest
-    outputs:
-      folder-list: ${{ steps.init-var.outputs.folders_array}}
-      artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
+    # outputs:
+    #   folder-list: ${{ steps.init-var.outputs.folders_array}}
+    #   artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
     steps:
       - name: Checkout Repo code
         uses: actions/checkout@v4

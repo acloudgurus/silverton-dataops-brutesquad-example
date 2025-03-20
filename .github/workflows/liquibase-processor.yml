@@ -40,9 +40,13 @@ jobs:
         run: |
           folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
           echo "folders_array=$folders_array" >> "$GITHUB_ENV"
-          echo "::set-output name=folders_array::$folders_array"
           echo "INFO: The array is $folders_array"
         shell: bash
+      - name: Upload Folder List as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: liquibase-folder-list
+          path: folders.json
       - name: Init Env variables
         id: init-env
         run: |

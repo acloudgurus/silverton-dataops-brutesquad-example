@@ -97,6 +97,10 @@ jobs:
           folders_array=$(cat folders.json)
           echo "FOLDER_LIST=$folders_array" >> $GITHUB_ENV
           echo "INFO: Read folder list: $folders_array"
+
+      - name: Debug Environment Variables
+        run: |
+          echo "TDV_ENV: ${{ inputs.TDV_ENV }}"
           
       - name: Run pvs_test python script
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev

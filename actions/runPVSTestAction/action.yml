@@ -1,0 +1,34 @@
+name: PVS Test action
+description: This file ... # TODO: Complete description later
+inputs:
+  TDV_ENV:
+    description: TDV Environment
+    required: true
+  TDV_DEV_USERNAME:
+    description: TDV DEV Username
+    required: true
+  TDV_DEV_PASSWORD:
+    description: TDV DEV Password
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        set -x
+        python -m pip install --upgrade pip
+        pip install poetry==1.7.1
+        poetry -C ${{ github.action_path }} install
+      shell: bash
+    - name: run python script
+      shell: bash
+      env:
+        TDV_USERNAME: ${{ inputs.TDV_DEV_USERNAME }}
+        TDV_PASSWORD: ${{ inputs.TDV_DEV_PASSWORD }}
+      run: |
+        poetry -C ${{ github.action_path }} run pvs_testing

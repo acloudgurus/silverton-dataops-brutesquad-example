@@ -1,0 +1,93 @@
+name: dataops pipeline deployment workflow
+
+on:
+  workflow_call:
+    inputs:
+      TDV_ENV:
+        required: true
+        type: string
+      LIQUIBASE_COMMAND:
+        required: true
+        type: string
+      OPS_TYPE:
+        required: true
+        type: string
+      RUN_RULES_ENGINE:
+        required: true
+        type: boolean
+      USE_LIQUIBASE_TAG:
+        required: true
+        type: boolean
+      LIQUIBASE_TAG:
+        required: false
+        type: string
+      RulesEngine_TAG: 
+        required: true 
+        type: string
+
+
+jobs:
+  FindSQLDir:
+    name: Initialize and Setup
+    runs-on: zilverton-private-x64-ubuntu
+    outputs:
+      folder-list: ${{ steps.find-folders.outputs.folder-list }}
+      folder-list-fullpath: ${{ steps.find-folders.outputs.folder-list-fullpath }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Find all ddl dml stored_proc full path dir under the src check out dir
+        id: find-folders
+        uses: zilvertonz/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@dev
+        with:
+          OPS_TYPE: ${{ inputs.OPS_TYPE }}
+
+  RunREScan:
+    uses: ./.github/workflows/run_RE_scan.yaml
+    if: ${{ inputs.RUN_RULES_ENGINE == true }}
+    needs:
+      - FindSQLDir
+    with:
+      PIPELINE_ENV: dev
+      TDV_ENV: ${{ inputs.TDV_ENV }}
+      OPS_TYPE: ${{ inputs.OPS_TYPE }}
+      RulesEngine_TAG: ${{ inputs.RulesEngine_TAG}}
+      DIR_LIST: ${{ needs.FindSQLDir.outputs.folder-list }}
+    secrets: inherit
+
+  LiquibaseProcessor:
+    name: Liquibase Process
+    uses: ./.github/workflows/liquibase-processor.yml
+    if: ${{ always() && ((needs.RunREScan.result == 'skipped' || needs.RunREScan.result == 'success')) && (needs.FindSQLDir.result == 'success') }}
+    needs:
+      - FindSQLDir
+      - RunREScan
+    with:
+      TDV_ENV: ${{ inputs.TDV_ENV }}
+      LIQUIBASE_COMMAND: ${{ inputs.LIQUIBASE_COMMAND }}
+      OPS_TYPE: ${{ inputs.OPS_TYPE }}
+      USE_LIQUIBASE_TAG: ${{ inputs.USE_LIQUIBASE_TAG}}
+      LIQUIBASE_TAG: ${{ inputs.LIQUIBASE_TAG }}
+      FOLDER_LIST: ${{ needs.FindSQLDir.outputs.folder-list-fullpath }}
+    secrets: inherit
+
+  # PVS Test entry point
+  ## TODO: Only runs in Test/UAT - Must validate that branch used to push to prod is EXACTLY the same as used for PVS Test
+  ## TODO: Consume changelog from LiquibaseProcessor block in order to parse SPs
+  PVSTest:
+    name: PVS Test
+    runs-on: zilverton-private-x64-ubuntu
+    # uses: ./.github/workflows/pvs_test.yml
+    #    if: ${{github.ref == 'refs/heads/uat'}}         TODO: Add this conditional to if check once ready to work in uat/test env
+    if: ${{ always() && ((needs.RunREScan.result == 'skipped' || needs.RunREScan.result == 'success')) && (needs.FindSQLDir.result == 'success') }} # TODO: Add additional check for liquibase job completion
+    needs:
+      - FindSQLDir
+      - RunREScan
+      - LiquibaseProcessor
+    steps:
+      - name: Run pvs_test python script
+        uses: zilvertonz/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev
+        with:
+          TDV_ENV: ${{ inputs.TDV_ENV }}
+          TDV_DEV_USERNAME: ${{ secrets.TDV_DEV_USERNAME }}
+          TDV_DEV_PASSWORD: ${{ secrets.TDV_DEV_PASSWORD }}

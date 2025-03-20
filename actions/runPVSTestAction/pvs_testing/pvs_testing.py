@@ -69,8 +69,8 @@ def main():
     
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog for Environment '{tdv_env}': {changelog_file}")
-             else:
-            print(f"❌ WARNING: No file found at '{changelog_file}'")
+            else:
+                print(f"❌ WARNING: No file found at '{changelog_file}'")
         else:
             print(f"❌ WARNING: Folder does not exist - '{folder}'")
             # Add processing logic here

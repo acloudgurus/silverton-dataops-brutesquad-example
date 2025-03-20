@@ -14,6 +14,7 @@ import teradatasql
 import logging
 import sys
 import glob
+import json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -45,7 +45,16 @@ def _pass_or_fail(result_dict):
 def main():
     # Read environment and folder paths from GitHub Actions inputs
     tdv_env = os.getenv("TDV_ENV").lower()
-    folder_paths = os.getenv("FOLDER_LIST", "").split()
+    folder_list_raw = os.getenv("FOLDER_LIST", "[]")
+    print(f"DEBUG: Raw Folder List: {folder_list_raw}")  # Debugging step
+    try:
+        folder_list = json.loads(folder_list_raw)  # ✅ Properly parse JSON list
+    except json.JSONDecodeError:
+        print("❌ ERROR: FOLDER_LIST is not a valid JSON list.")
+        sys.exit(1)
+
+# ✅ Ensure we only get valid folder paths
+folder_list = [folder.strip() for folder in folder_list if folder.strip()]
     
     if not folder_paths:
         print("Error: No folder paths received.")
@@ -66,6 +75,7 @@ def main():
         if os.path.isdir(folder):
             # Search for {TDV_ENV}.changelog.xml inside the folder
             changelog_file = os.path.join(folder, changelog_filename)
+            print(f"Changelog file path is {changelog}")
     
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog for Environment '{tdv_env}': {changelog_file}")

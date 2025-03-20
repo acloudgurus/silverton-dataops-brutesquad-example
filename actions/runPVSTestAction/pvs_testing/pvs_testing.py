@@ -57,10 +57,12 @@ def main():
     
     # Construct the expected file name format
     changelog_filename = f"{tdv_env}.changelog.xml"
+    print(changelog_filename)
     
     # Process each folder
     for folder in folder_paths:
         folder = folder.strip()
+        print(f"Folder : {}")
         if os.path.isdir(folder):
             # Search for {TDV_ENV}.changelog.xml inside the folder
             changelog_file = os.path.join(folder, changelog_filename)

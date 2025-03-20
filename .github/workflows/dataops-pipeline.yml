@@ -85,6 +85,19 @@ jobs:
       - RunREScan
       - LiquibaseProcessor
     steps:
+      - name: Download Folder List Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: liquibase-folder-list
+          path: .
+
+      - name: Read Folder List from Artifact
+        id: read-folders
+        run: |
+          folders_array=$(cat folders.json)
+          echo "FOLDER_LIST=$folders_array" >> $GITHUB_ENV
+          echo "INFO: Read folder list: $folders_array"
+          
       - name: Run pvs_test python script
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev
         with:

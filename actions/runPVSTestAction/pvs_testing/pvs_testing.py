@@ -69,7 +69,12 @@ def main():
     
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog for Environment '{tdv_env}': {changelog_file}")
+             else:
+            print(f"❌ WARNING: No file found at '{changelog_file}'")
+        else:
+            print(f"❌ WARNING: Folder does not exist - '{folder}'")
             # Add processing logic here
+            
 
     # logger.info(f"Hello from the script")
     # work_item_id = str(datetime.now().strftime("%Y%m%d%H%M"))

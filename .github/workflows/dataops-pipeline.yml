@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Find all ddl dml stored_proc full path dir under the src check out dir
         id: find-folders
-        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@dev
+        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@main
         with:
           OPS_TYPE: ${{ inputs.OPS_TYPE }}
 

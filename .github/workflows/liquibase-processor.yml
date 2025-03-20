@@ -1,0 +1,94 @@
+name: liquibase processor workflow
+
+on:
+  workflow_call:
+    inputs:
+      TDV_ENV:
+        required: true
+        type: string
+      LIQUIBASE_COMMAND:
+        required: true
+        type: string
+      OPS_TYPE:
+        required: true
+        type: string
+      USE_LIQUIBASE_TAG:
+        required: true
+        type: boolean
+      LIQUIBASE_TAG:
+        required: false
+        type: string
+      FOLDER_LIST:
+        required: true
+        type: string
+
+jobs:
+  InitAndSetup:
+    name: Initialize and setup the liquibase on runner
+    runs-on: ubuntu-latest
+    outputs:
+      folder-list: ${{ steps.init-var.outputs.folders_array}}
+      artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
+    steps:
+      - name: Checkout Repo code
+        uses: actions/checkout@v4
+      - name: Init the Liquibase
+        id: init-liquibase
+        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@dev
+      - name: Parse the FOLDER_LIST
+        id: init-var
+        run: |
+          folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
+          echo "folders_array=$folders_array" >> "$GITHUB_ENV"
+          echo "INFO: The array is $folders_array"
+        shell: bash
+      - name: Init Env variables
+        id: init-env
+        run: |
+          if [[ ${{ inputs.TDV_ENV}}  == "DEV" ]]; then
+          echo "INFO: Get DEV secrets"
+            echo 'TDV_USER=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          elif [[ ${{ inputs.TDV_ENV }} == "UAT" ]]; then
+            echo "INFO: Get UAT secrets"
+            echo 'TDV_USER=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          elif [[ ${{ inputs.TDV_ENV }} == "PRD" ]]; then
+            echo "INFO: Get PRD secrets"
+            echo 'TDV_USER=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          else
+            echo "INFO: Get DEV secrets, or fail it??"
+            echo 'TDV_USER=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          fi
+        shell: bash
+      - name: Run the Liquibase commands
+        id: liquibase-run
+        run: |
+          # Convert the string containing folder list to an array
+          read -ra folder_array <<< "${{ inputs.FOLDER_LIST }}"
+          
+          for folder_path in ${folder_array[@]}; do
+            echo "INFO: -- Process the $folder_path"
+            properties_file="$folder_path/config/${{ inputs.TDV_ENV }}/liquibase.properties"
+
+            if [[ "${{ inputs.LIQUIBASE_TAG }}" != ""  && "${{ inputs.ASSIGN_LIQUIBASE_TAG }}" == "true" ]]; then
+              TAG_CMD="--tag=${{ inputs.LIQUIBASE_TAG }}"
+              echo "INFO: Now TAG_CMD is $TAG_CMD"
+              # If the liquibase command is update, we need to apply the TAG first          
+              if [[ "${{ inputs.LIQUIBASE_COMMAND }}" == "update" ]]; then
+                ./liquibase/liquibase tag $TAG_CMD \
+                  --defaultsFile=$properties_file \
+                  --logLevel=FINE \
+                  --username=${{ env.TDV_USER }} --password=${{ env.TDV_PASSWORD }}
+              fi
+            fi
+            
+            ./liquibase/liquibase ${{ inputs.LIQUIBASE_COMMAND }} $TAG_CMD \
+              --defaultsFile=$properties_file \
+              --logLevel=FINE \
+              --username=${{ env.TDV_USER }} --password=${{ env.TDV_PASSWORD }}
+          done
+
+        shell: bash

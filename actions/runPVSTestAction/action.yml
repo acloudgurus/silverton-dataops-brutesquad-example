@@ -31,5 +31,6 @@ runs:
         TDV_ENV: ${{ inputs.TDV_ENV }}
         TDV_USERNAME: ${{ inputs.TDV_DEV_USERNAME }}
         TDV_PASSWORD: ${{ inputs.TDV_DEV_PASSWORD }}
+        FOLDER_LIST: ${{ env.FOLDER_LIST }}
       run: |
         poetry -C ${{ github.action_path }} run pvs_testing

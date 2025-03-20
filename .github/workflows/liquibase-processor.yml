@@ -25,7 +25,7 @@ on:
 jobs:
   InitAndSetup:
     name: Initialize and setup the liquibase on runner
-    runs-on: zilverton-private-x64-ubuntu
+    runs-on: ubuntu-latest
     outputs:
       folder-list: ${{ steps.init-var.outputs.folders_array}}
       artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Init the Liquibase
         id: init-liquibase
-        uses: zilvertonz/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@dev
+        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@dev
       - name: Parse the FOLDER_LIST
         id: init-var
         run: |

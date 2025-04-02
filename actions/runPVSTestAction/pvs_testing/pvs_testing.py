@@ -106,7 +106,7 @@ def main():
                 print(f"Processing Changelog: {changelog_file}")
                 # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)
                 sp_names = extract_sql_names_from_changelog(changelog_file)
-                print(f"Extracted SQL names from changelog: {sql_names}")
+                print(f"Extracted SQL names from changelog: {sp_names}")
             else:
                 print(f"WARNING: No file found at '{changelog_file}'")
         else:

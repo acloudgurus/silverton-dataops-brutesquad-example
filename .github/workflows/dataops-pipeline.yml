@@ -36,6 +36,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
       - name: Find all ddl dml stored_proc full path dir under the src check out dir
         id: find-folders
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@main

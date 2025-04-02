@@ -36,14 +36,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout-cone-mode: false
-      - name: Show folder structure
-        run: |
-          echo "PWD: $(pwd)"
-          echo "Contents of workspace:"
-          find .
+
       - name: Find all ddl dml stored_proc full path dir under the src check out dir
         id: find-folders
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@main
@@ -114,11 +107,6 @@ jobs:
         run: |
           echo "TDV_ENV: ${{ inputs.TDV_ENV }}"
 
-      - name: Show folder structure
-        run: |
-          echo "PWD: $(pwd)"
-          echo "Contents of workspace:"
-          find .
           
       - name: Run pvs_test python script
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev

@@ -105,12 +105,59 @@ def main():
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog: {changelog_file}")
                 # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)
-                sql_names = extract_sql_names_from_changelog(changelog_file)
+                sp_names = extract_sql_names_from_changelog(changelog_file)
                 print(f"Extracted SQL names from changelog: {sql_names}")
             else:
                 print(f"WARNING: No file found at '{changelog_file}'")
         else:
             print(f"WARNING: Folder does not exist - '{folder}'")
+
+    ## TODO: Uncomment and integrate after changelog input feature complete
+    
+    ## Initialize variables with environment variable values for usage
+    # teradata_username = os.environ.get("TDV_USERNAME")
+    # teradata_password = os.environ.get("TDV_PASSWORD")
+    # teradata_host_server = "hstntduat.healthspring.inside"
+    # ## Parse the stored procedures into a list from a string
+    # stored_procedures = [name.strip() for name in str(os.environ.get("STORED_PROCEDURES")).split(',') if name.strip()]
+    # logger.info(f"STORED PROCEDURES VALUES: {stored_procedures}")
+    
+    ## Intialize variables with dynamic definitions constructed from parameters/env vars
+    ## TODO: Change work item id to be a pass value once change tickets are implemented
+    work_item_id = "CHG33333_CTASK33333:"
+    pvs_table_result_query = f"select TEST_STATUS from PVS_TEST.PVS_TEST_INFO_V where USER_NAME = '{teradata_username}' and WORK_ITEM = '{work_item_id}'"
+    start_test_procedure = f"CALL PVS_TEST.START_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    end_test_procedure = f"CALL PVS_TEST.END_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    
+    # Parse incoming string into list of strings delimited by ,
+    # stored_procedures = [name.strip() for name in str(os.environ.get("STORED_PROCEDURES")).split(',') if name.strip()]
+    logger.info(f"STORED PROCEDURES VALUES: {stored_procedures}")
+    
+    # with teradatasql.connect(
+    #         host=teradata_host_server,
+    #         user=teradata_username,
+    #         password=teradata_password,
+    #         LOGMECH="LDAP",
+    #         encryptdata=True
+    # ) as td_conn:
+    
+        # Start PVS Test
+        # logger.info(f"Executing Start PVS Test")
+        # execute_tdv_query(td_conn=td_conn, query=start_test_procedure)
+    
+        # Run stored procedure(s)
+        for sp in sp_names:
+            logger.info(f"Executing Stored Procedure: {sp}")
+            execute_tdv_query(td_conn=td_conn, query=sp)
+    
+        # # End PVS Test
+        # logger.info(f"Executing End PVS Test")
+        # execute_tdv_query(td_conn=td_conn, query=end_test_procedure)
+    
+        # # Get results
+        # logger.info(f"Result of PVS Test")
+        # pvs_result = execute_tdv_query(td_conn=td_conn, query=pvs_table_result_query)
+        # pass_or_fail(pvs_result)
 
 if __name__ == "__main__":
     main()

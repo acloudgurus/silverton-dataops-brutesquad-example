@@ -39,6 +39,11 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout-cone-mode: false
+      - name: Show folder structure
+        run: |
+          echo "PWD: $(pwd)"
+          echo "Contents of workspace:"
+          find .
       - name: Find all ddl dml stored_proc full path dir under the src check out dir
         id: find-folders
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/findSqlFolderAction@main

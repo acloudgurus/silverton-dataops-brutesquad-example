@@ -141,23 +141,23 @@ def main():
     #         encryptdata=True
     # ) as td_conn:
     
-        # Start PVS Test
-        # logger.info(f"Executing Start PVS Test")
-        # execute_tdv_query(td_conn=td_conn, query=start_test_procedure)
-    
-        # Run stored procedure(s)
-        for sp in sp_names:
-            logger.info(f"Executing Stored Procedure: {sp}")
-            execute_tdv_query(td_conn=td_conn, query=sp)
-    
-        # # End PVS Test
-        # logger.info(f"Executing End PVS Test")
-        # execute_tdv_query(td_conn=td_conn, query=end_test_procedure)
-    
-        # # Get results
-        # logger.info(f"Result of PVS Test")
-        # pvs_result = execute_tdv_query(td_conn=td_conn, query=pvs_table_result_query)
-        # pass_or_fail(pvs_result)
+    # Start PVS Test
+    # logger.info(f"Executing Start PVS Test")
+    # execute_tdv_query(td_conn=td_conn, query=start_test_procedure)
+
+    # Run stored procedure(s)
+    for sp in sp_names:
+        logger.info(f"Executing Stored Procedure: {sp}")
+        execute_tdv_query(td_conn=td_conn, query=sp)
+
+    # # End PVS Test
+    # logger.info(f"Executing End PVS Test")
+    # execute_tdv_query(td_conn=td_conn, query=end_test_procedure)
+
+    # # Get results
+    # logger.info(f"Result of PVS Test")
+    # pvs_result = execute_tdv_query(td_conn=td_conn, query=pvs_table_result_query)
+    # pass_or_fail(pvs_result)
 
 if __name__ == "__main__":
     main()

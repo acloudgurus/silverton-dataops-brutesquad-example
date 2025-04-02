@@ -16,6 +16,7 @@ runs:
   steps:
     - name: Debug working directory
       run: pwd && ls
+      shell: bash
       
     - name: Set up Python 3.10
       uses: actions/setup-python@v3

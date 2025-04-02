@@ -91,7 +91,7 @@ def main():
                         print(contents)
                         print('-'*60)
                 except Exception as e:
-        print(f"❌ ERROR reading file: {changelog_file} - {e}")
+                    print(f"❌ ERROR reading file: {changelog_file} - {e}")
             else:
                 print(f"WARNING: No file found at '{changelog_file}'")
         else:

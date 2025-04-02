@@ -124,14 +124,14 @@ def main():
     
     ## Intialize variables with dynamic definitions constructed from parameters/env vars
     ## TODO: Change work item id to be a pass value once change tickets are implemented
-    work_item_id = "CHG33333_CTASK33333:"
-    pvs_table_result_query = f"select TEST_STATUS from PVS_TEST.PVS_TEST_INFO_V where USER_NAME = '{teradata_username}' and WORK_ITEM = '{work_item_id}'"
-    start_test_procedure = f"CALL PVS_TEST.START_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
-    end_test_procedure = f"CALL PVS_TEST.END_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    # work_item_id = "CHG33333_CTASK33333:"
+    # pvs_table_result_query = f"select TEST_STATUS from PVS_TEST.PVS_TEST_INFO_V where USER_NAME = '{teradata_username}' and WORK_ITEM = '{work_item_id}'"
+    # start_test_procedure = f"CALL PVS_TEST.START_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    # end_test_procedure = f"CALL PVS_TEST.END_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
     
     # Parse incoming string into list of strings delimited by ,
     # stored_procedures = [name.strip() for name in str(os.environ.get("STORED_PROCEDURES")).split(',') if name.strip()]
-    logger.info(f"STORED PROCEDURES VALUES: {stored_procedures}")
+    # logger.info(f"STORED PROCEDURES VALUES: {stored_procedures}")
     
     # with teradatasql.connect(
     #         host=teradata_host_server,

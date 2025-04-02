@@ -84,6 +84,14 @@ def main():
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog: {changelog_file}")
                 # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)
+                try:
+                    with open(changelog_file, 'r') as file:
+                        contents = file.read()
+                        print(f"📂 File Contents of '{changelog_file}':\n{'-'*60}")
+                        print(contents)
+                        print('-'*60)
+                except Exception as e:
+        print(f"❌ ERROR reading file: {changelog_file} - {e}")
             else:
                 print(f"WARNING: No file found at '{changelog_file}'")
         else:

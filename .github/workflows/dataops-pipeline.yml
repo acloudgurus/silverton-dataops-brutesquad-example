@@ -93,6 +93,10 @@ jobs:
       - RunREScan
       - LiquibaseProcessor
     steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
       - name: Download Folder List Artifact
         uses: actions/download-artifact@v4
         with:

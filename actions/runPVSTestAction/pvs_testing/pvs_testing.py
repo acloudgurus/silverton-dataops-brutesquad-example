@@ -15,6 +15,7 @@ import logging
 import sys
 import glob
 import json
+import xml.etree.ElementTree as ET
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +41,26 @@ def _pass_or_fail(result_dict):
     if pvs_result == 'FAILED':
         logger.info("FAILURE")
         exit(1)
+
+#extracting the sql names from the changelog files
+def extract_sql_names_from_changelog(file_path):
+    sql_names = []
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        namespace = {'ns': 'http://www.liquibase.org/xml/ns/dbchangelog'}
+
+        for include in root.findall('ns:include', namespace):
+            file_attr = include.attrib.get('file', '')
+            if file_attr.endswith('.sql'):
+                # Get just the file name without path and extension
+                file_name = os.path.splitext(os.path.basename(file_attr))[0]
+                sql_names.append(file_name)
+
+    except Exception as e:
+        print(f"❌ Error parsing XML changelog: {e}")
+    
+    return sql_names
 
 
 # Main function to perform PVS Test against specified stored procedures
@@ -84,14 +105,8 @@ def main():
             if os.path.exists(changelog_file):
                 print(f"Processing Changelog: {changelog_file}")
                 # 🔹 Add processing logic here (e.g., parse XML, run Liquibase, etc.)
-                try:
-                    with open(changelog_file, 'r') as file:
-                        contents = file.read()
-                        print(f"📂 File Contents of '{changelog_file}':\n{'-'*60}")
-                        print(contents)
-                        print('-'*60)
-                except Exception as e:
-                    print(f"❌ ERROR reading file: {changelog_file} - {e}")
+                sql_names = extract_sql_names_from_changelog(changelog_file)
+                print(f"Extracted SQL names from changelog: {sql_names}")
             else:
                 print(f"WARNING: No file found at '{changelog_file}'")
         else:

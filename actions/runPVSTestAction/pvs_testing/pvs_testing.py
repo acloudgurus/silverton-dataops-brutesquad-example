@@ -148,7 +148,7 @@ def main():
     # Run stored procedure(s)
     for sp in sp_names:
         logger.info(f"Executing Stored Procedure: {sp}")
-        execute_tdv_query(td_conn=td_conn, query=sp)
+        # _execute_tdv_query(td_conn=td_conn, query=sp)
 
     # # End PVS Test
     # logger.info(f"Executing End PVS Test")

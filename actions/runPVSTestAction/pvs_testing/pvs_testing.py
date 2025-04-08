@@ -66,6 +66,10 @@ def extract_sql_names_from_changelog(file_path):
 # Main function to perform PVS Test against specified stored procedures
 def main():
     # Read environment variables
+    tdv_username = os.getenv("TDV_DEV_USERNAME")
+    tdv_password = os.getenv("TDV_DEV_PASSWORD")
+    print(f"Username: {tdv_username}")
+    print(f"Password: {tdv_password}")
     tdv_env = os.getenv("TDV_ENV", "").strip().lower()
     folder_list_raw = os.getenv("FOLDER_LIST", "[]").strip()
     

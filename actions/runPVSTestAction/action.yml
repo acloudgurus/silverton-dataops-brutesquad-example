@@ -29,8 +29,8 @@ runs:
       shell: bash
       env:
         TDV_ENV: ${{ inputs.TDV_ENV }}
-        TDV_USERNAME: ${{ inputs.TDV_DEV_USERNAME }}
-        TDV_PASSWORD: ${{ inputs.TDV_DEV_PASSWORD }}
+        TDV_USERNAME: ${{ inputs.TDV_USERNAME }}
+        TDV_PASSWORD: ${{ inputs.TDV_PASSWORD }}
         DIRECTORY_LIST: ${{ inputs.DIRECTORY_LIST }}
         FOLDER_LIST: ${{ env.FOLDER_LIST }}
       run: |

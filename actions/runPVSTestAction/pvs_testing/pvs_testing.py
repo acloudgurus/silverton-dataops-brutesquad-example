@@ -187,7 +187,14 @@ def main():
         print("FOLDER_LIST not found in env")
         return
 
-    folder_list = folder_list.split(" ")  # Space separated folder paths from FOLDER_LIST
+    try:
+        folder_list = json.loads(folder_list)  # Clean parsing of ["path1", "", "", "path2"]
+    except Exception as e:
+        print("Failed to parse FOLDER_LIST:", e)
+        return
+
+    # Remove empty strings from the list
+    folder_list = [folder for folder in folder_list if folder.strip()]
 
     for folder in folder_list:
         print(f"Searching in Folder: {folder}")

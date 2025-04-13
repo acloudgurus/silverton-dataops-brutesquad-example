@@ -25,7 +25,7 @@ on:
 jobs:
   InitAndSetup:
     name: Initialize and setup the liquibase on runner
-    runs-on: zilverton-private-x64-ubuntu
+    runs-on: ubuntu-latest
     outputs:
       folder-list: ${{ steps.init-var.outputs.folders_array}}
       artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}

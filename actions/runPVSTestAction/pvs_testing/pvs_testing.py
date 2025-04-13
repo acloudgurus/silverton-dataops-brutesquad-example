@@ -171,7 +171,7 @@ def main():
     teradata_password = os.environ.get("TDV_PASSWORD")
     teradata_env = os.environ.get("TDV_ENV")
     teradata_dir_list = os.environ.get("DIRECTORY_LIST")
-    teradata_folder_list = os.environ.get("env.FOLDER_LIST")
+    teradata_folder_list = os.environ.get("FOLDER_LIST")
     print(teradata_username)
     print(teradata_password)
     print(teradata_env)

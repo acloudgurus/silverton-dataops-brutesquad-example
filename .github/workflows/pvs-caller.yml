@@ -17,7 +17,7 @@ on:
 jobs:
   PVSCaller:
     name: Initialize environment and call composite action
-    runs-on: zilverton-private-x64-ubuntu
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment variables
         id: init-env

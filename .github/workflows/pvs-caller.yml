@@ -1,0 +1,51 @@
+name: PVS Test Caller
+
+on:
+  workflow_call:
+    inputs:
+      TDV_ENV:
+        description: TDV Environment
+        type: string
+      DIRECTORY_LIST:
+        description: Directories containing changlogs for stored procedures to be tested
+        type: string
+      FOLDER_LIST:
+        description: Folders containing changlogs for stored procedures to be tested
+        type: string
+
+## TODO: Update environment variables as envs are made available/tested
+jobs:
+  PVSCaller:
+    name: Initialize environment and call composite action
+    runs-on: zilverton-private-x64-ubuntu
+    steps:
+      - name: Initialize environment variables
+        id: init-env
+        run: |
+          if [[ ${{ inputs.TDV_ENV}}  == "DEV" ]]; then
+          echo "INFO: Get DEV secrets"
+            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          elif [[ ${{ inputs.TDV_ENV }} == "UAT" ]]; then
+            echo "INFO: Get UAT secrets"
+            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          elif [[ ${{ inputs.TDV_ENV }} == "PRD" ]]; then
+            echo "INFO: Get PRD secrets"
+            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          else
+            echo "INFO: Get DEV secrets, or fail it??"
+            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Call PVS test composite action
+        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev
+        with:
+          TDV_ENV: ${{ inputs.TDV_ENV }}
+          TDV_USERNAME: ${{ env.TDV_USERNAME }}
+          TDV_PASSWORD: ${{ env.TDV_PASSWORD }}
+          DIRECTORY_LIST: ${{ needs.FindSQLDir.outputs.folder-list }}
+          FOLDER_LIST: ${{ needs.FindSQLDir.outputs.folder-list-fullpath }}

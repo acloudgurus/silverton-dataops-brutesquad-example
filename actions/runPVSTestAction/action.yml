@@ -10,7 +10,13 @@ inputs:
   TDV_PASSWORD:
     description: TDV DEV Password
     required: true
-
+  DIRECTORY_LIST:
+    description: Directories List
+    required: true
+  FOLDER_LIST:
+    description: Folder List
+    required: true
+    
 runs:
   using: "composite"
   steps:
@@ -25,6 +31,12 @@ runs:
         pip install poetry==1.7.1
         poetry -C ${{ github.action_path }} install
       shell: bash
+    - name: Parse the FOLDER_LIST
+        id: init-var
+        run: |
+          folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
+          echo "folders_array=$folders_array" >> "$GITHUB_ENV"
+          echo "INFO: The array is $folders_array"
     - name: run python script
       shell: bash
       env:
@@ -32,6 +44,6 @@ runs:
         TDV_USERNAME: ${{ inputs.TDV_USERNAME }}
         TDV_PASSWORD: ${{ inputs.TDV_PASSWORD }}
         DIRECTORY_LIST: ${{ inputs.DIRECTORY_LIST }}
-        FOLDER_LIST: ${{ env.FOLDER_LIST }}
+        FOLDER_LIST: ${{ inputs.FOLDER_LIST }}
       run: |
         poetry -C ${{ github.action_path }} run pvs_testing

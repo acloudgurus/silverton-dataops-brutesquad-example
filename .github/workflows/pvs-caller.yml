@@ -61,5 +61,5 @@ jobs:
           TDV_ENV: ${{ inputs.TDV_ENV }}
           TDV_USERNAME: ${{ env.TDV_USERNAME }}
           TDV_PASSWORD: ${{ env.TDV_PASSWORD }}
-          DIRECTORY_LIST: ${{ needs.FindSQLDir.outputs.folder-list }}
+          DIRECTORY_LIST: ${{ env.dir_array }}
           FOLDER_LIST: ${{ env.folders_array }}

@@ -31,12 +31,12 @@ runs:
         pip install poetry==1.7.1
         poetry -C ${{ github.action_path }} install
       shell: bash
-    - name: Parse the FOLDER_LIST
-        id: init-var
-        run: |
-          folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
-          echo "folders_array=$folders_array" >> "$GITHUB_ENV"
-          echo "INFO: The array is $folders_array"
+    # - name: Parse the FOLDER_LIST
+    #     id: init-var
+    #     run: |
+    #       folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
+    #       echo "folders_array=$folders_array" >> "$GITHUB_ENV"
+    #       echo "INFO: The array is $folders_array"
     - name: run python script
       shell: bash
       env:

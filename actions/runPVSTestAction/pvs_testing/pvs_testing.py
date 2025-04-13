@@ -42,25 +42,28 @@ logger = logging.getLogger(__name__)
 #         logger.info("FAILURE")
 #         exit(1)
 
-# #extracting the sql names from the changelog files
-# def extract_sql_names_from_changelog(file_path):
-#     sql_names = []
-#     try:
-#         tree = ET.parse(file_path)
-#         root = tree.getroot()
-#         namespace = {'ns': 'http://www.liquibase.org/xml/ns/dbchangelog'}
+#fetch files from the tables folder
+def find_sp_pairs(base_folder):
+    tables_path = os.path.join(base_folder, 'tables')
 
-#         for include in root.findall('ns:include', namespace):
-#             file_attr = include.attrib.get('file', '')
-#             if file_attr.endswith('.sql'):
-#                 # Get just the file name without path and extension
-#                 file_name = os.path.splitext(os.path.basename(file_attr))[0]
-#                 sql_names.append(file_name)
+    sp_def_files = []
+    sp_run_files = []
 
-#     except Exception as e:
-#         print(f"❌ Error parsing XML changelog: {e}")
-    
-#     return sql_names
+    if not os.path.exists(tables_path):
+        print(f"No tables directory in {base_folder}")
+        return []
+
+    for filename in os.listdir(tables_path):
+        if filename.startswith("BLUE_PRINTS_SAMPLE_SPROC_") and filename.endswith(".sql"):
+            sp_def_files.append(os.path.join(tables_path, filename))
+        if filename.startswith("BLUE_PRINTS_SAMPLE_RUN_SPROC_") and filename.endswith(".sql"):
+            sp_run_files.append(os.path.join(tables_path, filename))
+
+    # Sort both lists to maintain pair order
+    sp_def_files.sort()
+    sp_run_files.sort()
+
+    return list(zip(sp_def_files, sp_run_files))
 
 
 # # Main function to perform PVS Test against specified stored procedures
@@ -179,7 +182,19 @@ def main():
     print(teradata_env)
     print(teradata_dir_list)
     print(teradata_folder_list)
-    
+    folder_list = os.environ.get("FOLDER_LIST")
+    if not folder_list:
+        print("FOLDER_LIST not found in env")
+        return
+
+    folder_list = folder_list.split(" ")  # Space separated folder paths from FOLDER_LIST
+
+    for folder in folder_list:
+        print(f"Searching in Folder: {folder}")
+        pairs = find_sp_pairs(folder)
+        print(f"Found {len(pairs)} SP File Pairs in {folder}")
+        for sp_def, sp_run in pairs:
+            print(f"SP Def: {sp_def} -- SP Run: {sp_run}")
 
 
 

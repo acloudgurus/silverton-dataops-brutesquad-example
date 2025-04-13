@@ -15,6 +15,7 @@ import logging
 import sys
 import glob
 import json
+import re
 import xml.etree.ElementTree as ET
 
 # Configure logging

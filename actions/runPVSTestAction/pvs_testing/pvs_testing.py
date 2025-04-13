@@ -21,6 +21,15 @@ import xml.etree.ElementTree as ET
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+MATCH_KEYWORDS = [
+    'CREATE PROCEDURE',
+    'CREATE OR REPLACE PROCEDURE',
+    'REPLACE PROCEDURE',
+    'CREATE FUNCTION',
+    'CREATE OR REPLACE FUNCTION',
+    'REPLACE FUNCTION'
+]
+
 
 # # Executes SQL query given against td_conn passed into function
 # def _execute_tdv_query(td_conn, query):
@@ -56,6 +65,21 @@ def fetch_all_sql_files(base_folder):
             sql_files.append(os.path.join(tables_path, filename))
 
     return sql_files
+
+#extracting the stored procedure name
+def extract_proc_names_from_file(filepath):
+    extracted_procs = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            line_upper = line.strip().upper()
+            for keyword in MATCH_KEYWORDS:
+                if line_upper.startswith(keyword):
+                    # Extract schema.procedure_name using regex
+                    match = re.search(r'(\S+)\s*\(', line.strip())  # Original line for correct value
+                    if match:
+                        proc_name = match.group(1)
+                        extracted_procs.append(proc_name)
+    return extracted_procs
 
 
 # # Main function to perform PVS Test against specified stored procedures
@@ -179,13 +203,21 @@ def main():
 
     folder_list = [folder for folder in folder_list if folder.strip()]
 
+    final_proc_list = []
+
     for folder in folder_list:
         print(f"Searching in Folder: {folder}")
         sql_files = fetch_all_sql_files(folder)
         print(f"Found {len(sql_files)} SQL files in {folder}")
         for sql_file in sql_files:
-            print(f"SQL File: {sql_file}")
+            procs = extract_proc_names_from_file(sql_file)
+            if procs:
+                print(f"Extracted from {sql_file}: {procs}")
+                final_proc_list.extend(procs)
 
+    print("\n==== FINAL LIST OF PROCEDURES/FUNCTIONS FOUND ====")
+    for proc in final_proc_list:
+        print(proc)
 
 if __name__ == "__main__":
     main()

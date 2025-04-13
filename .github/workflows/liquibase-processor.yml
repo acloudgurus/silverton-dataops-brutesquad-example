@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Init the Liquibase
         id: init-liquibase
-        uses: zilvertonz/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@dev
+        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@main
       - name: Parse the FOLDER_LIST
         id: init-var
         run: |

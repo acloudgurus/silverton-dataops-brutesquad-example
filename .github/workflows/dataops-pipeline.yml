@@ -76,42 +76,15 @@ jobs:
   ## TODO: Only runs in Test/UAT - Must validate that branch used to push to prod is EXACTLY the same as used for PVS Test
   ## TODO: Consume changelog from LiquibaseProcessor block in order to parse SPs
   PVSTest:
-    name: PVS Test
-    runs-on: ubuntu-latest
-    # uses: ./.github/workflows/pvs_test.yml
-    #    if: ${{github.ref == 'refs/heads/uat'}}         TODO: Add this conditional to if check once ready to work in uat/test env
-    if: ${{ always() && ((needs.RunREScan.result == 'skipped' || needs.RunREScan.result == 'success')) && (needs.FindSQLDir.result == 'success') }} # TODO: Add additional check for liquibase job completion
-    needs:
-      - FindSQLDir
-      - RunREScan
-      - LiquibaseProcessor
-    steps:
-
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        
-      - name: Download Folder List Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: liquibase-folder-list
-          path: .
-
-      - name: Read Folder List from Artifact
-        id: read-folders
-        run: |
-          folders_array=$(cat folders.json)
-          echo "FOLDER_LIST=$folders_array" >> $GITHUB_ENV
-          echo "INFO: Read folder list: $folders_array"
-
-      - name: Debug Environment Variables
-        run: |
-          echo "TDV_ENV: ${{ inputs.TDV_ENV }}"
-
-          
-      - name: Run pvs_test python script
-        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev
-        with:
-          TDV_ENV: ${{ inputs.TDV_ENV }}
-          TDV_DEV_USERNAME: ${{ secrets.TDV_DEV_USERNAME }}
-          TDV_DEV_PASSWORD: ${{ secrets.TDV_DEV_PASSWORD }}
-          FOLDER_LIST: ${{ env.FOLDER_LIST }}
+      name: PVS Test
+      uses: ./.github/workflows/pvs-caller.yml
+      if: ${{ always() && ((needs.RunREScan.result == 'skipped' || needs.RunREScan.result == 'success')) && (needs.FindSQLDir.result == 'success') }} # TODO: Add additional check for liquibase job completion (Might need to consult with Jack to determine whether liquibase always runs)
+      needs:
+        - FindSQLDir
+        - RunREScan
+        - LiquibaseProcessor
+      with:
+        TDV_ENV: ${{ inputs.TDV_ENV }}
+        DIRECTORY_LIST: ${{ needs.FindSQLDir.outputs.folder-list }}
+        FOLDER_LIST: ${{ needs.FindSQLDir.outputs.folder-list-fullpath }}
+      secrets: inherit

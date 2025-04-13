@@ -43,27 +43,19 @@ logger = logging.getLogger(__name__)
 #         exit(1)
 
 #fetch files from the tables folder
-def find_sp_pairs(base_folder):
+def fetch_all_sql_files(base_folder):
     tables_path = os.path.join(base_folder, 'tables')
-
-    sp_def_files = []
-    sp_run_files = []
+    sql_files = []
 
     if not os.path.exists(tables_path):
         print(f"No tables directory in {base_folder}")
         return []
 
     for filename in os.listdir(tables_path):
-        if filename.startswith("BLUE_PRINTS_SAMPLE_SPROC_") and filename.endswith(".sql"):
-            sp_def_files.append(os.path.join(tables_path, filename))
-        if filename.startswith("BLUE_PRINTS_SAMPLE_RUN_SPROC_") and filename.endswith(".sql"):
-            sp_run_files.append(os.path.join(tables_path, filename))
+        if filename.endswith(".sql"):
+            sql_files.append(os.path.join(tables_path, filename))
 
-    # Sort both lists to maintain pair order
-    sp_def_files.sort()
-    sp_run_files.sort()
-
-    return list(zip(sp_def_files, sp_run_files))
+    return sql_files
 
 
 # # Main function to perform PVS Test against specified stored procedures
@@ -170,16 +162,8 @@ def find_sp_pairs(base_folder):
 #     main()
 
 def main():
-    teradata_username = os.environ.get("TDV_USERNAME")
-    teradata_password = os.environ.get("TDV_PASSWORD")
-    teradata_env = os.environ.get("TDV_ENV")
     teradata_dir_list = os.environ.get("DIRECTORY_LIST")
     teradata_folder_list = os.environ.get("FOLDER_LIST")
-    logger.info(f"DIRECTORY_LIST: {teradata_dir_list}")
-    logger.info(f"FOLDER_LIST: {teradata_folder_list}")
-    print(teradata_username)
-    print(teradata_password)
-    print(teradata_env)
     print(teradata_dir_list)
     print(teradata_folder_list)
     folder_list = os.environ.get("FOLDER_LIST")
@@ -188,23 +172,19 @@ def main():
         return
 
     try:
-        folder_list = json.loads(folder_list)  # Clean parsing of ["path1", "", "", "path2"]
+        folder_list = json.loads(folder_list)
     except Exception as e:
         print("Failed to parse FOLDER_LIST:", e)
         return
 
-    # Remove empty strings from the list
     folder_list = [folder for folder in folder_list if folder.strip()]
 
     for folder in folder_list:
         print(f"Searching in Folder: {folder}")
-        pairs = find_sp_pairs(folder)
-        print(f"Found {len(pairs)} SP File Pairs in {folder}")
-        for sp_def, sp_run in pairs:
-            print(f"SP Def: {sp_def} -- SP Run: {sp_run}")
-
-
-
+        sql_files = fetch_all_sql_files(folder)
+        print(f"Found {len(sql_files)} SQL files in {folder}")
+        for sql_file in sql_files:
+            print(f"SQL File: {sql_file}")
 
 
 if __name__ == "__main__":

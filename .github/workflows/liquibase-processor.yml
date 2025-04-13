@@ -25,7 +25,7 @@ on:
 jobs:
   InitAndSetup:
     name: Initialize and setup the liquibase on runner
-    runs-on: ubuntu-latest
+    runs-on: zilverton-private-x64-ubuntu
     outputs:
       folder-list: ${{ steps.init-var.outputs.folders_array}}
       artifact-id: ${{ steps.upload-artifact.outputs.artifact-id}}
@@ -34,20 +34,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Init the Liquibase
         id: init-liquibase
-        uses: acloudgurus/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@main
+        uses: zilvertonz/silverton-dataops-brutesquad-example/actions/initLiquibaseAction@dev
       - name: Parse the FOLDER_LIST
         id: init-var
         run: |
           folders_array=$(echo "${{ inputs.FOLDER_LIST }}" | jq -c --raw-input 'split(" ")')
-          echo "$folders_array" > folders.json
           echo "folders_array=$folders_array" >> "$GITHUB_ENV"
           echo "INFO: The array is $folders_array"
         shell: bash
-      - name: Upload Folder List as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: liquibase-folder-list
-          path: folders.json
       - name: Init Env variables
         id: init-env
         run: |

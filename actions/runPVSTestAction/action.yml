@@ -14,13 +14,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Debug working directory
-      run: pwd && ls
-      shell: bash
-    - name: List all files
-      run: ls -R
-      shell: bash
-      
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -38,6 +31,7 @@ runs:
         TDV_ENV: ${{ inputs.TDV_ENV }}
         TDV_USERNAME: ${{ inputs.TDV_DEV_USERNAME }}
         TDV_PASSWORD: ${{ inputs.TDV_DEV_PASSWORD }}
+        DIRECTORY_LIST: ${{ inputs.DIRECTORY_LIST }}
         FOLDER_LIST: ${{ env.FOLDER_LIST }}
       run: |
         poetry -C ${{ github.action_path }} run pvs_testing

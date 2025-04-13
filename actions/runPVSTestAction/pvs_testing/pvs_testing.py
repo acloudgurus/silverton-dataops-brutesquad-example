@@ -167,16 +167,24 @@ import xml.etree.ElementTree as ET
 #     main()
 
 def main():
+    logger.info(f"DIRECTORY_LIST: {directory_list}")
+    logger.info(f"FOLDER_LIST: {folder_list}")
     teradata_username = os.environ.get("TDV_USERNAME")
     teradata_password = os.environ.get("TDV_PASSWORD")
     teradata_env = os.environ.get("TDV_ENV")
     teradata_dir_list = os.environ.get("DIRECTORY_LIST")
     teradata_folder_list = os.environ.get("FOLDER_LIST")
+    logger.info(f"DIRECTORY_LIST: {teradata_dir_list}")
+    logger.info(f"FOLDER_LIST: {teradata_folder_list}")
     print(teradata_username)
     print(teradata_password)
     print(teradata_env)
     print(teradata_dir_list)
     print(teradata_folder_list)
+    
+
+
+
 
 
 if __name__ == "__main__":

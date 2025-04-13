@@ -167,8 +167,6 @@ logger = logging.getLogger(__name__)
 #     main()
 
 def main():
-    logger.info(f"DIRECTORY_LIST: {directory_list}")
-    logger.info(f"FOLDER_LIST: {folder_list}")
     teradata_username = os.environ.get("TDV_USERNAME")
     teradata_password = os.environ.get("TDV_PASSWORD")
     teradata_env = os.environ.get("TDV_ENV")

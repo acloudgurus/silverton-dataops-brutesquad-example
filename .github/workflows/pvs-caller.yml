@@ -48,6 +48,13 @@ jobs:
           echo "folders_array=$folders_array" >> "$GITHUB_ENV"
           echo "INFO: The array is $folders_array"
 
+      - name: Parse the DIRECTORY_LIST
+        id: init-var1
+        run: |
+          folders_array=$(echo "${{ inputs.DIRECTORY_LIST }}" | jq -c --raw-input 'split(" ")')
+          echo "DIR_array=$DIR_array" >> "$GITHUB_ENV"
+          echo "INFO: The array is $DIR_array"
+
       - name: Call PVS test composite action
         uses: acloudgurus/silverton-dataops-brutesquad-example/actions/runPVSTestAction@feature_pvs-test    # TODO: Change this before merge with dev to refer to dev
         with:

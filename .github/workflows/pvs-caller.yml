@@ -24,20 +24,20 @@ jobs:
         run: |
           if [[ ${{ inputs.TDV_ENV}}  == "DEV" ]]; then
           echo "INFO: Get DEV secrets"
-            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
-            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+            echo 'TDV_USERNAME=${{ secrets.TDV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_PASSWORD }}' >> $GITHUB_ENV
           elif [[ ${{ inputs.TDV_ENV }} == "UAT" ]]; then
             echo "INFO: Get UAT secrets"
-            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
-            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+            echo 'TDV_USERNAME=${{ secrets.TDV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_PASSWORD }}' >> $GITHUB_ENV
           elif [[ ${{ inputs.TDV_ENV }} == "PRD" ]]; then
             echo "INFO: Get PRD secrets"
-            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
-            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+            echo 'TDV_USERNAME=${{ secrets.TDV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_PASSWORD }}' >> $GITHUB_ENV
           else
             echo "INFO: Get DEV secrets, or fail it??"
-            echo 'TDV_USERNAME=${{ secrets.TDV_DEV_USERNAME }}' >> $GITHUB_ENV
-            echo 'TDV_PASSWORD=${{ secrets.TDV_DEV_PASSWORD }}' >> $GITHUB_ENV
+            echo 'TDV_USERNAME=${{ secrets.TDV_USERNAME }}' >> $GITHUB_ENV
+            echo 'TDV_PASSWORD=${{ secrets.TDV_PASSWORD }}' >> $GITHUB_ENV
           fi
         shell: bash
 

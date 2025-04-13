@@ -4,10 +4,10 @@ inputs:
   TDV_ENV:
     description: TDV Environment
     required: true
-  TDV_DEV_USERNAME:
+  TDV_USERNAME:
     description: TDV DEV Username
     required: true
-  TDV_DEV_PASSWORD:
+  TDV_PASSWORD:
     description: TDV DEV Password
     required: true
 

@@ -22,15 +22,6 @@ import xml.etree.ElementTree as ET
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-MATCH_KEYWORDS = [
-    'CREATE PROCEDURE',
-    'CREATE OR REPLACE PROCEDURE',
-    'REPLACE PROCEDURE',
-    'CREATE FUNCTION',
-    'CREATE OR REPLACE FUNCTION',
-    'REPLACE FUNCTION'
-]
-
 
 # # Executes SQL query given against td_conn passed into function
 def execute_tdv_query(td_conn, query):
@@ -69,16 +60,18 @@ def fetch_all_sql_files(base_folder):
 #extracting the stored procedure name
 def extract_proc_names_from_file(filepath):
     extracted_procs = []
+
     with open(filepath, 'r') as f:
-        for line in f:
-            line_upper = line.strip().upper()
-            for keyword in MATCH_KEYWORDS:
-                if line_upper.startswith(keyword):
-                    # Extract schema.procedure_name using regex
-                    match = re.search(r'(\S+)\s*\(', line.strip())  # Original line for correct value
-                    if match:
-                        proc_name = match.group(1)
-                        extracted_procs.append(proc_name)
+        file_content = f.read()  # Read the entire file at once
+    
+    # Regex to find CREATE PROCEDURE/FUNCTION containing ${dbEnv}
+    pattern = r'(?i)\b(create\s+(or\s+replace\s+)?(procedure|function))\s+(\S+\$\{dbEnv\}\.\S+)'
+    matches = re.findall(pattern, file_content)
+
+    for match in matches:
+        proc_name = match[3]  # Group capturing schema.${dbEnv}.object
+        extracted_procs.append(proc_name)
+
     return extracted_procs
 
 
@@ -119,42 +112,42 @@ def main():
         print(proc)
 
     # Initialize variables with environment variable values for usage
-    teradata_username = os.environ.get("TDV_USERNAME")
-    teradata_password = os.environ.get("TDV_PASSWORD")
-    teradata_host_server = "hstntduat.healthspring.inside"
+    # teradata_username = os.environ.get("TDV_USERNAME")
+    # teradata_password = os.environ.get("TDV_PASSWORD")
+    # teradata_host_server = "hstntduat.healthspring.inside"
 
-    # Intialize variables with dynamic definitions constructed from parameters/env vars
-    # TODO: Change work item id to be a pass value once change tickets are implemented
-    work_item_id = "CHG33333_CTASK33333:"
-    pvs_table_result_query = f"select TEST_STATUS from PVS_TEST.PVS_TEST_INFO_V where USER_NAME = '{teradata_username}' and WORK_ITEM = '{work_item_id}'"
-    start_test_procedure = f"CALL PVS_TEST.START_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
-    end_test_procedure = f"CALL PVS_TEST.END_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    # # Intialize variables with dynamic definitions constructed from parameters/env vars
+    # # TODO: Change work item id to be a pass value once change tickets are implemented
+    # work_item_id = "CHG33333_CTASK33333:"
+    # pvs_table_result_query = f"select TEST_STATUS from PVS_TEST.PVS_TEST_INFO_V where USER_NAME = '{teradata_username}' and WORK_ITEM = '{work_item_id}'"
+    # start_test_procedure = f"CALL PVS_TEST.START_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
+    # end_test_procedure = f"CALL PVS_TEST.END_PVS_TEST('{teradata_username}','{work_item_id}',PROC_MSG)"
 
-    with teradatasql.connect(
-                host=teradata_host_server,
-                user=teradata_username,
-                password=teradata_password,
-                LOGMECH="LDAP",
-                encryptdata=True
-        ) as td_conn:
+    # with teradatasql.connect(
+    #             host=teradata_host_server,
+    #             user=teradata_username,
+    #             password=teradata_password,
+    #             LOGMECH="LDAP",
+    #             encryptdata=True
+    #     ) as td_conn:
     
-    # Start PVS Test
-        logger.info(f"Executing Start PVS Test")
-    execute_tdv_query(td_conn=td_conn, query=start_test_procedure)
+    # # Start PVS Test
+    #     logger.info(f"Executing Start PVS Test")
+    # execute_tdv_query(td_conn=td_conn, query=start_test_procedure)
 
-    # Run stored procedure(s)
-    for sp in final_proc_list:
-        logger.info(f"Executing Stored Procedure: {sp}")
-        # _execute_tdv_query(td_conn=td_conn, query=sp)
+    # # Run stored procedure(s)
+    # for sp in final_proc_list:
+    #     logger.info(f"Executing Stored Procedure: {sp}")
+    #     # _execute_tdv_query(td_conn=td_conn, query=sp)
 
-    # End PVS Test
-        logger.info(f"Executing End PVS Test")
-        execute_tdv_query(td_conn=td_conn, query=end_test_procedure)
+    # # End PVS Test
+    #     logger.info(f"Executing End PVS Test")
+    #     execute_tdv_query(td_conn=td_conn, query=end_test_procedure)
 
-        # Get results
-        logger.info(f"Result of PVS Test")
-        pvs_result = execute_tdv_query(td_conn=td_conn, query=pvs_table_result_query)
-        pass_or_fail(pvs_result)
+    #     # Get results
+    #     logger.info(f"Result of PVS Test")
+    #     pvs_result = execute_tdv_query(td_conn=td_conn, query=pvs_table_result_query)
+    #     pass_or_fail(pvs_result)
 
 
 if __name__ == "__main__":
